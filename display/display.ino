@@ -10,7 +10,8 @@ enum STATE
 {
     WAITING = 0,
     WARNING = 1,
-    EMERGENCY = 2
+    EMERGENCY = 2,
+    IDLE = 3,
 };
 
 enum SIGNAL
@@ -69,37 +70,84 @@ bool state_timeout(int delta_time)
 
 void setup()
 {
-    pinMode(led, OUTPUT);
+    pinMode(LED_BUILTIN, OUTPUT);
     Serial.begin(9600);
-    while (!Serial); // Wait for serial port to be available
+    current_state = WARNING;
+    while (!Serial)
+        ; // Wait for serial port to be available
     if (!rf95.init())
         Serial.println("init failed");
 }
 
+void update()
+{
+    // move sensor handel here
+}
+
+void handel_state(STATE state)
+{
+    // based on current_state display the correct led output
+    switch (state)
+    {
+    case WAITING:
+        Serial.print("waiting, ");
+        digitalWrite(LED_BUILTIN, HIGH);
+        delay(1000);
+        digitalWrite(LED_BUILTIN, LOW);
+        delay(1000);
+        break;
+
+    case WARNING:
+        Serial.print("warning, ");
+        digitalWrite(LED_BUILTIN, HIGH);
+        delay(500);
+        digitalWrite(LED_BUILTIN, LOW);
+        delay(500);
+
+        break;
+
+    case EMERGENCY:
+        Serial.print("emergency, ");
+        digitalWrite(LED_BUILTIN, HIGH);
+        delay(100);
+        digitalWrite(LED_BUILTIN, LOW);
+        delay(100);
+        break;
+
+    case IDLE:
+        Serial.print("idle.");
+        digitalWrite(LED_BUILTIN, LOW);
+        break;
+    }
+}
+
 void loop()
 {
-    if (rf95.available())
-    {
-        uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
-        uint8_t len = sizeof(buf);
-        if (rf95.recv(buf, &len))
-        {
-            digitalWrite(led, HIGH);
-            Serial.print("got singal: ");
-            Serial.println((int *)buf);
-            handel_signal((int *)buf)
-            if (!state_timeout(delta_signal))
-            {
-                delta_signal = milli() - delta_signal; // calcs how much time passed sense last signal
-            } else {
-                current_state = WAITING;
-                delta_signal = 0;
-            }
-            digitalWrite(led, LOW);
-        }
-        else
-        {
-            Serial.println("recv failed");
-        }
-    }
+    // if (rf95.available())
+    // {
+    //     // uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
+    //     // uint8_t len = sizeof(buf);
+    //     // if (rf95.recv(buf, &len))
+    //     // {
+    //     //     // digitalWrite(led, HIGH);
+    //     //     // Serial.print("got singal: ");
+    //     //     // Serial.println((int *)buf);
+    //     //     // handel_signal((int *)buf)
+    //     //     // if (!state_timeout(delta_signal))
+    //     //     // {
+    //     //     //     delta_signal = milli() - delta_signal; // calcs how much time passed sense last signal
+    //     //     // } else {
+    //     //     //     current_state = WAITING;
+    //     //     //     delta_signal = 0;
+    //     //     // }
+    //     //     update();
+    //     //     display(current_state);
+    //     // }
+    //     // else
+    //     // {
+    //     //     Serial.println("recv failed");
+    //     // }
+    // }
+    update();
+    handel_state(current_state);
 }
