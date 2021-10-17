@@ -20,7 +20,8 @@ void setup()
 
 void loop()
 {
-    if (digitalRead(inPin) == HIGH) {
+    if (digitalRead(inPin) == HIGH)
+    {
         uint8_t data[] = "PIR";
         rf95.send(data, sizeof(data));
         Serial.println("Sent data");

@@ -79,11 +79,12 @@ void loop()
         uint8_t len = sizeof(buf);
         if (rf95.recv(buf, &len))
         {
+            uint8_t data[] = (int *)buf;
             Serial.print("Signal recvied. ");
-            Serial.println((int *)buf);
-            uint8_t data[] = (int* )buf;
+            Serial.print(data)
 
-            if (data == "PIR") {
+            if (data == "PIR")
+            {
                 update_signal();
             }
         }
@@ -97,7 +98,7 @@ void loop()
     if (state_timeout(delta_signal, millis_timeout))
     {
         // cycles through each state
-        current_state = STATE((current_state + WARNING) % 2);
+        // current_state = STATE((current_state + WARNING) % 2);
 
         // reset timestamp to current time
         delta_signal = millis();
