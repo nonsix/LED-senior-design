@@ -17,8 +17,8 @@ enum STATE
 // default state
 STATE current_state = IDLE;
 
-// Takes a signal code and sets the display state accordingly.
-STATE handel_signal(SIGNAL signal)
+// Sets the display state to its next state based on its current.
+STATE update_signal()
 {
     switch (current_state)
     {
@@ -81,7 +81,11 @@ void loop()
         {
             Serial.print("Signal recvied. ");
             Serial.println((int *)buf);
-            // TODO: add code to change states from signal
+            uint8_t data[] = (int* )buf;
+
+            if (data == "PIR") {
+                update_signal();
+            }
         }
         else
         {
