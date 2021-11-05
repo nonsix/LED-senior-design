@@ -3,7 +3,16 @@
 #include <SPI.h>
 #include <RH_RF95.h>
 
-RH_RF95 rf95(8, 3); // Adafruit Feather M0 with RFM95
+// for feather m0 RFM9x
+#define RFM95_CS 8
+#define RFM95_RST 4
+#define RFM95_INT 3
+
+// Change to 434.0 or other frequency, must match RX's freq!
+#define RF95_FREQ 915.0
+
+// Singleton instance of the radio driver
+RH_RF95 rf95(RFM95_CS, RFM95_INT);
 
 int delta_signal = 0; // timestamp from last signal in milliseconds
 
@@ -18,7 +27,7 @@ enum STATE
 STATE current_state = IDLE;
 
 // Sets the display state to its next state based on its current.
-STATE update_signal()
+void update_signal()
 {
     switch (current_state)
     {
@@ -43,12 +52,37 @@ bool state_timeout(int delta_time, int timeout)
 void setup()
 {
     pinMode(LED_BUILTIN, OUTPUT);
-    Serial.begin(9600);
+    pinMode(RFM95_RST, OUTPUT);
+    digitalWrite(RFM95_RST, HIGH);
+
+    Serial.begin(115200);
+
     current_state = IDLE;
     while (!Serial)
-        ; // Wait for serial port to be available
+    {
+        delay(1);
+    }
+
+    // manual reset
+    digitalWrite(RFM95_RST, LOW);
+    delay(10);
+    digitalWrite(RFM95_RST, HIGH);
+    delay(10);
+
     if (!rf95.init())
         Serial.println("init failed");
+
+    // Defaults after init are 434.0MHz, modulation GFSK_Rb250Fd250, +13dbM
+    if (!rf95.setFrequency(RF95_FREQ))
+    {
+        Serial.println("setFrequency failed");
+        while (1)
+            ;
+    }
+    Serial.print("Set Freq to: ");
+    Serial.println(RF95_FREQ);
+
+    rf95.setTxPower(23, false);
 }
 
 // state:   The state the display is going to represent
@@ -57,12 +91,11 @@ void handel_state(STATE state)
     switch (state)
     {
     case IDLE:
-        Serial.print("idle. ");
         digitalWrite(LED_BUILTIN, HIGH);
+        delay(500);
         break;
 
     case WARNING:
-        Serial.print("warning, ");
         digitalWrite(LED_BUILTIN, LOW);
         delay(500);
         digitalWrite(LED_BUILTIN, HIGH);
@@ -79,14 +112,22 @@ void loop()
         uint8_t len = sizeof(buf);
         if (rf95.recv(buf, &len))
         {
-            uint8_t data[] = (int *)buf;
+            // char data[RH_RF95_MAX_MESSAGE_LEN] = (char *)buf;
+            char const *PIR = "PIR";
+            char const *data = (char*)buf;
             Serial.print("Signal recvied. ");
-            Serial.print(data)
-
-            if (data == "PIR")
+            Serial.println((char *)buf);
+            if (strcmp(PIR, data) == 0)
             {
+                Serial.println("TO");
                 update_signal();
             }
+
+            // Send a reply
+            uint8_t message[] = "And hello back to you";
+            rf95.send(message, sizeof(message));
+            rf95.waitPacketSent();
+            Serial.println("Sent a reply");
         }
         else
         {
@@ -99,7 +140,7 @@ void loop()
     {
         // cycles through each state
         // current_state = STATE((current_state + WARNING) % 2);
-
+        current_state = IDLE;
         // reset timestamp to current time
         delta_signal = millis();
     }
