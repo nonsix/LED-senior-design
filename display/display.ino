@@ -19,8 +19,8 @@ int delta_signal = 0; // timestamp from last signal in milliseconds
 // Each avaliable state
 enum STATE
 {
-    IDLE = 0,
-    WARNING = 1,
+    IDLE = 0, //default state, no active display
+    WARNING = 1, //Active state, displays light code for PIR detection
 };
 
 // default state
