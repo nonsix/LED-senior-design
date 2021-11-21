@@ -16,7 +16,7 @@ RH_RF95 rf95(RFM95_CS, RFM95_INT);
 // Sets the inital values for the display
 void setup()
 {
-    pinMode(inPin, INPUT);
+    pinMode(inPin,)
     pinMode(LED_BUILTIN, OUTPUT);
     Serial.begin(115200);
     while (!Serial)
