@@ -132,10 +132,14 @@ void loop()
         uint8_t len = sizeof(buf);
         if (rf95.recv(buf, &len))
         {
-            Serial.print("Signal recvied. ");
+            Serial.println("Signal recvied. ");
 
-            // Expected response from the PIR sensor
-            char const *PIR[] = {"PIR", "stuff"};
+            // Array of expected signals
+            // This is where you add more expected signals
+            // ANOTHER_SIGNAL is a placeholder and could be anything else
+            char const *PIR[] = {"PIR", "ANOTHER_SIGNAL"};
+
+            // This next line counts how many signal types are in the array
             int const signals_count = sizeof(PIR) / sizeof(PIR[0]);
 
             // Stores and interprets the input
@@ -143,8 +147,11 @@ void loop()
             int i;
             for (i = 0; i < signals_count; i++)
             {
-                if (strcmp(PIR[i], data) == 0)
+                if (strcmp(PIR[i], data) == 0) {
+                    Serial.print("Got Signal ");
+                    Serial.println(PIR[i]);
                     update_signal();
+                }
             }
         }
         else
