@@ -16,7 +16,7 @@ RH_RF95 rf95(RFM95_CS, RFM95_INT);
 // Sets the inital values for the display
 void setup()
 {
-    pinMode(inPin,)
+    pinMode(inPin, INPUT); // sets pin to digital input
     pinMode(LED_BUILTIN, OUTPUT);
     Serial.begin(115200);
     while (!Serial)
@@ -33,19 +33,25 @@ void setup()
     if (!rf95.setFrequency(RF95_FREQ))
     {
         Serial.println("setFrequency failed");
+        // We don't want to continue
         while (1)
             ;
     }
     Serial.print("Set Freq to: ");
     Serial.println(RF95_FREQ);
+    // Tx power defaults to 13 but can be set in the range of 2 to 20
+    // Higher the number the more range
     rf95.setTxPower(20, false);
 }
 
 void loop()
 {
+    // When the inPin is not receiving a signal transmit to display
     if (digitalRead(inPin) == LOW)
     {
-        uint8_t data[] = "PIR";
+        char const *signal = "PIR";
+        char const *location = "NORTH";
+        char const *data = signal + ":" + location;
         rf95.send(data, sizeof(data));
         Serial.println("Sent signal");
 

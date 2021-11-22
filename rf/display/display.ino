@@ -137,19 +137,27 @@ void loop()
             // Array of expected signals
             // This is where you add more expected signals
             // ANOTHER_SIGNAL is a placeholder and could be anything else
-            char const *PIR[] = {"PIR", "ANOTHER_SIGNAL"};
+            char const *signals[] = {"PIR", "ANOTHER_SIGNAL"};
 
             // This next line counts how many signal types are in the array
-            int const signals_count = sizeof(PIR) / sizeof(PIR[0]);
+            int const signals_length = sizeof(signals) / sizeof(signals[0]);
 
             // Stores and interprets the input
             char const *data = (char *)buf;
             int i;
-            for (i = 0; i < signals_count; i++)
+            for (i = 0; i < signals_length; i++)
             {
-                if (strcmp(PIR[i], data) == 0) {
-                    Serial.print("Got Signal ");
-                    Serial.println(PIR[i]);
+                int const delimiter = data.find(":");
+                char const *signal = data.substr(0, delimiter);
+                char const *location = data.substr(delimiter);
+
+                // returns 0 if both strings are equal
+                if (strcmp(signals[i], signal) == 0)
+                {
+                    Serial.print("Got Signal from ");
+                    Serial.print(location);
+                    Serial.print(" of type ");
+                    Serial.println(signal);
                     update_signal();
                 }
             }
