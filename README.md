@@ -14,10 +14,13 @@ Heavy foot traffic in order to mitigate accidents.
 This project makes use of **IoT** and built-in radio communication from the **Arduino Feather m0**  
 In order to serve its purpose.  
 
-### Installation/Use
+### Prerequisites
 
-In order to use the code in this project, be sure that you are using an **Arduino Feather m0**  
-For the best results.  
+- Using **Arduino Feather m0**  
+- Have Arduino IDE installed
+- Have **INSERT DEPENDENCIES HERE** installed
+
+### Installation/Use
 
 Depending on what type of communication is being used, upload the respective code to each board  
 using the Arduino IDE.  
