@@ -17,8 +17,11 @@ In order to serve its purpose.
 ### Prerequisites
 
 - Using **Arduino Feather m0**  
-- Have Arduino IDE installed
-- Have **INSERT DEPENDENCIES HERE** installed
+- Have Arduino IDE installed  
+- Have following dependencies installed/ready to use  
+  - RadioHead: https://github.com/PaulStoffregen/RadioHead  
+  - Arduino lmic: https://github.com/matthijskooijman/arduino-lmic  
+  - Arduino SPI : https://github.com/mikaelpatel/Arduino-SPI  
 
 ### Installation/Use
 
