@@ -102,12 +102,12 @@ void setup()
     rf95.setTxPower(20, false);
 }
 
-// handel_state
+// handle_state
 //
 // state:   The state the display is going to represent
 //
 // return:  no return value
-void handel_state(STATE state)
+void handle_state(STATE state)
 {
     // in milliseconds
     const int BLINK_DELAY = 500;
@@ -161,15 +161,14 @@ void loop()
             {
                 int const delimiter = find(data, len, ':');
                 String signal = packet.substring(0, delimiter);
-                String location = packet.substring(delimiter+1, len);
-                
+                String location = packet.substring(delimiter + 1, len);
+
                 if (signal == signals[i])
                 {
                     Serial.println("Got Signal from " + location + " of type " + signal);
                     update_signal();
                     break;
                 }
-                 
             }
         }
         else
@@ -188,5 +187,5 @@ void loop()
     }
 
     // sets display to the correct mode based on current_state
-    handel_state(current_state);
+    handle_state(current_state);
 }
