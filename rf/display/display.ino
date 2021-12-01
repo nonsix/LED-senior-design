@@ -17,7 +17,12 @@ RH_RF95 rf95(RFM95_CS, RFM95_INT);
 int delta_signal = 0;
 
 // Amount of time in miliseconds the display will stay a state with no input
-const int MILLIS_TIMEOUT = 2500;
+const int MILLIS_TIMEOUT = 5000;
+
+// Array of expected signals
+// This is where you add more expected signals
+// ANOTHER_SIGNAL is a placeholder and could be anything else
+char const *signals[] = {"PIR", "ANOTHER_SIGNAL"};
 
 // Each avaliable state
 // This is where you could add different display states
@@ -94,7 +99,7 @@ void setup()
     Serial.print("Set Freq to: ");
     Serial.println(RF95_FREQ);
 
-    rf95.setTxPower(23, false);
+    rf95.setTxPower(20, false);
 }
 
 // handel_state
@@ -124,6 +129,17 @@ void handel_state(STATE state)
     delay(BLINK_DELAY);
 }
 
+// returns index of searched char
+int find(char const *str, uint8_t len, char search)
+{
+    for (int i = 0; i < len; i++)
+    {
+        if (str[i] == search)
+            return i;
+    }
+    return -1;
+}
+
 void loop()
 {
     if (rf95.available())
@@ -134,32 +150,26 @@ void loop()
         {
             Serial.println("Signal recvied. ");
 
-            // Array of expected signals
-            // This is where you add more expected signals
-            // ANOTHER_SIGNAL is a placeholder and could be anything else
-            char const *signals[] = {"PIR", "ANOTHER_SIGNAL"};
-
             // This next line counts how many signal types are in the array
             int const signals_length = sizeof(signals) / sizeof(signals[0]);
 
             // Stores and interprets the input
             char const *data = (char *)buf;
-            int i;
-            for (i = 0; i < signals_length; i++)
-            {
-                int const delimiter = data.find(":");
-                char const *signal = data.substr(0, delimiter);
-                char const *location = data.substr(delimiter);
+            String packet = String(data);
 
-                // returns 0 if both strings are equal
-                if (strcmp(signals[i], signal) == 0)
+            for (int i = 0; i < signals_length; i++)
+            {
+                int const delimiter = find(data, len, ':');
+                String signal = packet.substring(0, delimiter);
+                String location = packet.substring(delimiter+1, len);
+                
+                if (signal == signals[i])
                 {
-                    Serial.print("Got Signal from ");
-                    Serial.print(location);
-                    Serial.print(" of type ");
-                    Serial.println(signal);
+                    Serial.println("Got Signal from " + location + " of type " + signal);
                     update_signal();
+                    break;
                 }
+                 
             }
         }
         else
