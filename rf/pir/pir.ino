@@ -49,9 +49,9 @@ void loop()
     // When the inPin is not receiving a signal transmit to display
     if (digitalRead(inPin) == LOW)
     {
-        char const *signal = "PIR";
-        char const *location = "NORTH";
-        char const *data = signal + ":" + location;
+        // data contains the type of signal being sent
+        // along with node location information.
+        char const *data = "PIR:NORTH_NODE";
         rf95.send(data, sizeof(data));
         Serial.println("Sent signal");
 
