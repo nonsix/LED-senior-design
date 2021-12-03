@@ -44,6 +44,7 @@ const lmic_pinmap lmic_pins = {
     .spi_freq = 8000000,
 };
 
+// utility function to print data during lorawan connetion
 void printHex2(unsigned v)
 {
     v &= 0xff;
@@ -52,10 +53,14 @@ void printHex2(unsigned v)
     Serial.print(v, HEX);
 }
 
+// Handles all posable lora state the connection could be in
 void onEvent(ev_t ev)
 {
+    // prints the timestamp of each event
     Serial.print(os_getTime());
     Serial.print(": ");
+
+    // compars the value of ev to each case
     switch (ev)
     {
     case EV_SCAN_TIMEOUT:
@@ -80,6 +85,7 @@ void onEvent(ev_t ev)
             devaddr_t devaddr = 0;
             u1_t nwkKey[16];
             u1_t artKey[16];
+            // sets the correct values of the above 4 lies
             LMIC_getSessionKeys(&netid, &devaddr, nwkKey, artKey);
             Serial.print("netid: ");
             Serial.println(netid, DEC);
@@ -163,6 +169,7 @@ void onEvent(ev_t ev)
     }
 }
 
+// ran each time the signal to the inPin is LOW
 void do_send(osjob_t *j)
 {
     // Check if there is not a current TX/RX job running
@@ -179,6 +186,7 @@ void do_send(osjob_t *j)
     // Next TX is scheduled after TX_COMPLETE event.
 }
 
+// ran before all other functions
 void setup()
 {
     delay(5000);
@@ -199,6 +207,7 @@ void setup()
 
 void loop()
 {
+    // When the inPin is not receiving a signal transmit to display
     if (digitalRead(inPin) == LOW)
     {
         // Start job (sending automatically starts OTAA too)

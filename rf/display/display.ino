@@ -113,7 +113,7 @@ void handle_state(STATE state)
     const int BLINK_DELAY = 500;
 
     // Every state needs to be setup in here if you want the display to reflect it.
-    // If not it will also be cause by default including IDEL
+    // If not it will also be cause by default including IDlE
     switch (state)
     {
     case WARNING:
@@ -142,6 +142,7 @@ int find(char const *str, uint8_t len, char search)
 
 void loop()
 {
+    // waits until rf is initalized
     if (rf95.available())
     {
         uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];

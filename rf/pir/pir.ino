@@ -3,6 +3,7 @@
 #include <SPI.h>
 #include <RH_RF95.h>
 
+// for feather m0 RFM9x
 #define RFM95_CS 8
 #define RFM95_RST 4
 #define RFM95_INT 3
@@ -51,7 +52,7 @@ void loop()
     {
         // data contains the type of signal being sent
         // along with node location information.
-        char const *data = "PIR:NORTH_NODE";
+        uint8_t data[] = "PIR:NORTH_NODE";
         rf95.send(data, sizeof(data));
         Serial.println("Sent signal");
 
