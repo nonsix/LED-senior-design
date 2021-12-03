@@ -23,7 +23,8 @@ The PIR and Display split is the different code for each board respective of the
 ### Prerequisites
 
 - Using **Arduino Feather m0**  
-- Have Arduino IDE installed  
+- Have Arduino IDE installed
+  - Follow specific instructions at: https://learn.adafruit.com/adafruit-feather-m0-basic-proto/setup   
 - Have following dependencies installed/ready to use  
   - RadioHead: https://github.com/PaulStoffregen/RadioHead  
   - Arduino lmic: https://github.com/matthijskooijman/arduino-lmic  
